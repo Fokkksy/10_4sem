@@ -34,7 +34,7 @@ int main()
     }
     catch (boost::system::system_error& error)
     {
-        std::cout <<  error.code() << std::endl;
+        std::cout << "Error occured! Error code = " << error.code() << ". Message: " << error.what() << "\n";
 
         system("pause");
 

@@ -2,6 +2,7 @@
 #include <boost/asio.hpp>
 
 void read_information_while(boost::asio::ip::tcp::socket& socket);
+
 void write_information(boost::asio::ip::tcp::socket& socket, const std::string& user_name);
 
 int main()
@@ -9,6 +10,7 @@ int main()
     std::string raw_ip_address = "127.0.0.1";  //IP address of server should be here
     auto port = 7777;
 
+    std::cout << "Please, enter your name: ";
     std::string user_name;
     std::getline(std::cin, user_name);
 
@@ -34,7 +36,7 @@ int main()
     }
     catch (boost::system::system_error& error)
     {
-        std::cout << error.code() << "\n";
+        std::cout << "Something went wrong! Check the error = " << error.code() << ". Message: " << error.what() << "\n";
 
         system("pause");
 

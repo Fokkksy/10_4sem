@@ -6,6 +6,42 @@ void write_information(boost::asio::ip::tcp::socket& socket, const std::string& 
 
 int main()
 {
+    std::string raw_ip_address = "127.0.0.1";  //IP address of server should be here
+    auto port = 7777;
+
+    std::string user_name;
+    std::getline(std::cin, user_name);
+
+    try
+    {
+        boost::system::error_code error_code;
+
+        boost::asio::ip::address ip_address =
+            boost::asio::ip::address::from_string(raw_ip_address, error_code);
+
+        boost::asio::ip::tcp::endpoint endpoint(ip_address, port);
+
+        boost::asio::io_service io_service;
+
+        boost::asio::ip::tcp::socket socket(io_service, endpoint.protocol());
+
+        socket.connect(endpoint);
+
+        auto reader = std::thread(read_information_while, std::ref(socket));
+        write_information(socket, user_name);
+        reader.join();
+
+    }
+    catch (boost::system::system_error& error)
+    {
+        std::cout << error.code() << "\n";
+
+        system("pause");
+
+        return error.code().value();
+    }
+
+    return 0;
 
 }
 

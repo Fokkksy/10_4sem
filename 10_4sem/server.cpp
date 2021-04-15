@@ -6,7 +6,42 @@ void write_information(boost::asio::ip::tcp::socket& socket, const std::string& 
 
 int main()
 {
+    const std::size_t size = 33;
 
+    auto port = 7777;
+
+    boost::asio::ip::tcp::endpoint endpoint(boost::asio::ip::address_v4::any(), port);
+
+    boost::asio::io_service io_service;
+
+    std::string user_name = "Happy server";
+
+    try
+    {
+        boost::asio::ip::tcp::acceptor acceptor(io_service, endpoint.protocol());
+
+        acceptor.bind(endpoint);
+
+        acceptor.listen(size);
+
+        boost::asio::ip::tcp::socket socket(io_service);
+
+        acceptor.accept(socket);
+        auto reader = std::thread(read_information_while, std::ref(socket));
+        write_information(socket, user_name);
+        reader.join();
+
+    }
+    catch (boost::system::system_error& error)
+    {
+        std::cout <<  error.code() << std::endl;
+
+        system("pause");
+
+        return error.code().value();
+    }
+
+    return 0;
 }
 
 void read_information_while(boost::asio::ip::tcp::socket& socket)
